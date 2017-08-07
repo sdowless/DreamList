@@ -10,26 +10,66 @@ import UIKit
 
 class ItemDetailsVC: UIViewController {
 
+    @IBOutlet weak var userImage: UIImageView!
+    @IBOutlet weak var titleField: CustomTextField!
+    @IBOutlet weak var priceField: CustomTextField!
+    @IBOutlet weak var detailsField: CustomTextField!
+    
+    var itemToUpload: Item?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        
+        if itemToUpload != nil {
+            loadItemData()
+        }
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    @IBAction func saveItem(_ sender: UIButton) {
+        
+        var item: Item!
+        
+        if itemToUpload == nil {
+            item = Item(context: context)
+        } else {
+            item = itemToUpload
+        }
+        
+        if let title = titleField.text {
+            item.title = title
+        }
+        
+        if let price = priceField.text {
+            item.price = (price as NSString).doubleValue
+            
+        }
+        
+        if let details = detailsField.text {
+            item.details = details
+        }
+        
+        ad.saveContext()
+        
+        _ = navigationController?.popViewController(animated: true)
+        
     }
-    */
+    
+    func loadItemData() {
+        if let item = itemToUpload {
+            titleField.text = item.title
+            priceField.text = "\(item.price)"
+            detailsField.text = item.details
+        }
+    }
 
+    @IBAction func deletePressed(_ sender: UIBarButtonItem) {
+        if itemToUpload != nil {
+            context.delete(itemToUpload!)
+            ad.saveContext()
+        }
+        _ = navigationController?.popViewController(animated: true)
+    }
+    
+    @IBAction func loadImage(_ sender: UIButton) {
+    }
 }
